@@ -46,7 +46,7 @@ def val(bus) -> bool:
     delay = bus.get("delay", 0)
     current_time = dt.datetime.now(tz)
 
-    time_del = dt.datetime.fromisoformat(bus_time) + dt.timedelta(seconds=delay)
+    time_del = dt.datetime.fromisoformat(bus_time).replace(tzinfo=None) + dt.timedelta(seconds=delay)
     minutes_until = (time_del.hour - current_time.hour) * 60 + (time_del.minute - current_time.minute)
 
     if minutes_until >= settings.ETA:

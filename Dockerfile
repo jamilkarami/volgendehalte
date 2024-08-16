@@ -1,4 +1,4 @@
-FROM python:3.8-alpine
+FROM python:3.12
 COPY ./requirements.txt /vhalte/requirements.txt
 WORKDIR /vhalte
 RUN pip install -r requirements.txt

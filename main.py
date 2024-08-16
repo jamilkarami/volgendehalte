@@ -19,13 +19,10 @@ def get_next_buses(count):
         here_api_url.format(settings.BUS_STOP_ID, settings.HERE_API_KEY)
     ).json()
 
-    buses = data["boards"][0]["departures"]
+    departures = data["boards"][0]["departures"]
 
-    if not buses:
-        print("No buses")
-
-    valid_buses = [v_bus for bus in buses if (v_bus := val(bus)) is not None]
-    valid_buses.sort(key=lambda bus: bus["eta"])
+    valid_buses = [v_bus for departure in departures if (v_bus := val(departure)) is not None]
+    valid_buses.sort(key=lambda departure: departure["eta"])
 
     if not valid_buses:
         return {"Error": "No buses found"}
@@ -40,10 +37,10 @@ def bus():
     return buses
 
 
-def val(bus) -> bool:
-    bus_time = bus["time"]
-    bus_number = bus["transport"]["name"]
-    delay = bus.get("delay", 0)
+def val(bus_info):
+    bus_time = bus_info["time"]
+    bus_number = bus_info["transport"]["name"]
+    delay = bus_info.get("delay", 0)
     current_time = dt.datetime.now(tz)
 
     time_del = dt.datetime.fromisoformat(bus_time).replace(tzinfo=None) + dt.timedelta(seconds=delay)

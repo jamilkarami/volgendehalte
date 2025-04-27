@@ -1,8 +1,13 @@
-FROM python:3.12
-COPY ./requirements.txt /vhalte/requirements.txt
-WORKDIR /vhalte
-RUN pip install -r requirements.txt
-COPY . /vhalte
+FROM python:3.11-slim
 
-ENTRYPOINT [ "python" ]
-CMD [ "main.py" ]
+WORKDIR /vhalte
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+COPY . .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+ENTRYPOINT ["python"]
+CMD ["main.py"]

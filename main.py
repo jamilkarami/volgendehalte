@@ -1,23 +1,22 @@
 import datetime as dt
 import pytz
-
+import dotenv
+import os
 from flask import Flask, request
 
 import requests
 
-import settings
-
 app = Flask(__name__)
 
-tz = pytz.timezone(settings.TIMEZONE)
+dotenv.load_dotenv()
 
-here_api_url = "https://transit.hereapi.com/v8/departures?ids={}&apiKey={}"
+tz = pytz.timezone(os.getenv("TIMEZONE"))
+
+here_api_url = f"https://transit.hereapi.com/v8/departures?ids={os.getenv('BUS_STOP_ID')}&apiKey={os.getenv('HERE_API_KEY')}"
 
 
 def get_next_buses(count):
-    data = requests.get(
-        here_api_url.format(settings.BUS_STOP_ID, settings.HERE_API_KEY)
-    ).json()
+    data = requests.get(here_api_url).json()
 
     departures = data["boards"][0]["departures"]
 
@@ -46,7 +45,7 @@ def val(bus_info):
     time_del = dt.datetime.fromisoformat(bus_time).replace(tzinfo=None) + dt.timedelta(seconds=delay)
     minutes_until = (time_del.hour - current_time.hour) * 60 + (time_del.minute - current_time.minute)
 
-    if minutes_until >= settings.ETA:
+    if minutes_until >= int(os.getenv("ETA")):
         return {
             "number": bus_number,
             "eta": minutes_until,

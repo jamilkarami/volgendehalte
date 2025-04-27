@@ -2,5 +2,11 @@ services:
   web:
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
       - '5000:5000'
+    environment:
+      - BUS_STOP_ID=${BUS_STOP_ID}
+      - ETA=${ETA}
+      - HERE_API_KEY=${HERE_API_KEY}
+      - TIMEZONE=${TIMEZONE}
